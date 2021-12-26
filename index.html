@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CaseStudy</title>
+    <script src="egg.js"></script>
+    <script src="basket.js"></script>
+</head>
+<body>
+<canvas id="myCanvas" width="500" height="800" style="border: 1px solid black"></canvas>
+<script>
+    let canvas = document.getElementById("myCanvas");
+    let ctx = canvas.getContext('2d');
+    let myBasket = new Basket(225, 770, 50, 30, 'img/basket.png');
+    let myEgg = new Egg(100, 100, 25, 25, 'img/egg.png');
+    myBasket.drawBasket(ctx);
+    myEgg.drawEgg(ctx);
+
+    function moveBasket(event) {
+        switch (event.keyCode) {
+            case 37: {
+                if (myBasket.x < 0) {
+                    return;
+                }
+                myBasket.moveLeft();
+                break;
+            }
+
+            case 39: {
+                if (myBasket.x + myBasket.width > canvas.clientWidth) {
+                    return;
+                }
+                myBasket.moveRight();
+                break;
+            }
+        }
+        updateCanvas();
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, 500, 800);
+    }
+
+    function moveEgg() {
+        if (myEgg.y > canvas.clientHeight) {
+            myEgg.y = 0;
+            myEgg._x = Math.random() * 500;
+        }
+        myEgg.moveDown();
+        updateCanvas();
+    }
+
+    function updateCanvas() {
+        clearCanvas();
+        myEgg.drawEgg(ctx);
+        myBasket.drawBasket(ctx);
+    }
+
+    setInterval(moveEgg, 50);
+    document.addEventListener('keydown', moveBasket);
+
+</script>
+
+</body>
+</html>
