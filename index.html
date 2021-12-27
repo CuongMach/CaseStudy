@@ -8,18 +8,27 @@
 </head>
 <body>
 <canvas id="myCanvas" width="500" height="800" style="border: 1px solid black"></canvas>
+<p id="scoreShow">score:0</p>
 <script>
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext('2d');
-    let myBasket = new Basket(225, 770, 50, 30, 'img/basket.png');
+    let myBasket = new Basket(225, 770, 50, 30, 'img/basket.png', 25);
     let myEgg = new Egg(100, 100, 25, 25, 'img/egg.png');
+    let score = 0;
+    let background = new Image();
+    let interval = -1;
+    background.src='https://i.pinimg.com/originals/91/cd/19/91cd19b23307cc92da34e8167b947fef.jpg'
     myBasket.drawBasket(ctx);
     myEgg.drawEgg(ctx);
+
+    function run(){
+        ctx.drawImage(background,0,0,500,800)
+    }
 
     function moveBasket(event) {
         switch (event.keyCode) {
             case 37: {
-                if (myBasket.x < 0) {
+                if (myBasket.x < 25) {
                     return;
                 }
                 myBasket.moveLeft();
@@ -27,7 +36,7 @@
             }
 
             case 39: {
-                if (myBasket.x + myBasket.width > canvas.clientWidth) {
+                if (myBasket.x + myBasket.width > canvas.clientWidth-25) {
                     return;
                 }
                 myBasket.moveRight();
@@ -41,25 +50,39 @@
         ctx.clearRect(0, 0, 500, 800);
     }
 
-    function moveEgg() {
-        if (myEgg.y > canvas.clientHeight) {
-            myEgg.y = 0;
-            myEgg._x = Math.random() * 500;
+    function checkcollision(){
+        if(myEgg.y+myEgg.height===canvas.height){
+            return true;
         }
-        myEgg.moveDown();
-        updateCanvas();
     }
-
+    function moveEgg() {
+        if(myEgg.x>myBasket.x && myEgg.x<myBasket.width+myBasket.x&& myEgg.y>myBasket.y){
+            score++;
+            document.getElementById("scoreShow").innerHTML = "score: " + score;
+        }
+            if (myEgg.y > canvas.clientHeight) {
+                myEgg.y = 0;
+                myEgg._x = Math.random() * 475;
+            }
+            myEgg.moveDown();
+            updateCanvas();
+            if (checkcollision()){
+                cancelAnimationFrame(interval);
+            } else{
+                interval = requestAnimationFrame(moveEgg);
+            }
+    }
     function updateCanvas() {
         clearCanvas();
+        run();
         myEgg.drawEgg(ctx);
         myBasket.drawBasket(ctx);
     }
-
-    setInterval(moveEgg, 50);
+    setInterval(moveEgg, 1000);
     document.addEventListener('keydown', moveBasket);
+    // moveEgg();
+
 
 </script>
-
 </body>
 </html>
