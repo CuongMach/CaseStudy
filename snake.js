@@ -1,18 +1,18 @@
-class Basket {
+class Snake{
     _x;
     _y;
     _width;
     _height;
-    _src;
     _speed;
+    _src;
 
-    constructor(x, y, width, height, src, speed) {
+    constructor(x, y, width, height, speed,src) {
         this._x = x;
         this._y = y;
         this._width = width;
         this._height = height;
-        this._src = src;
         this._speed = speed;
+        this._src = src;
     }
 
     get x() {
@@ -47,14 +47,6 @@ class Basket {
         this._height = value;
     }
 
-    get src() {
-        return this._src;
-    }
-
-    set src(value) {
-        this._src = value;
-    }
-
     get speed() {
         return this._speed;
     }
@@ -62,24 +54,19 @@ class Basket {
     set speed(value) {
         this._speed = value;
     }
-
-    moveLeft() {
-        this._x = this._x - this._speed;
+    get src() {
+        return this._src;
     }
 
-    moveRight() {
-        this._x = this._x + this._speed;
+    set src(value) {
+        this._src = value;
     }
-
-    upSpeed(){
-        this._speed *= 1.5;
+    moveDown() {
+        this._y += this._speed;
     }
-    downSpeed(){
-        this._speed /=1.5;
-    }
-    drawBasket(ctx) {
-        let imageBasket = new Image();
-        imageBasket.src = this._src;
-        ctx.drawImage(imageBasket, this._x, this._y, this._width, this._height);
+    drawSnake(ctx) {
+        let imageSnake = new Image();
+        imageSnake.src = this._src;
+        ctx.drawImage(imageSnake, this._x, this._y, this._width, this._height)
     }
 }

@@ -5,24 +5,62 @@
     <title>CaseStudy</title>
     <script src="egg.js"></script>
     <script src="basket.js"></script>
+    <script src="snake.js"></script>
+    <script src="life.js"></script>
 </head>
-<body>
-<canvas id="myCanvas" width="500" height="800" style="border: 1px solid black"></canvas>
-<p id="scoreShow">score:0</p>
+<style>
+    .container {
+        margin-left: 20%;
+        margin-top: 1%;
+        height: 80%;
+        width: 60%;
+        border-color: yellow;
+        /*background-color: blue;*/
+        color: #00BCD4;
+        border-radius: 30px;
+        box-shadow: 0px 0px 50px #101010;
+        padding: 15px;
+        font-size: 30px;
+    }
+
+    canvas {
+        background: yellow;
+        display: block;
+        height: 40%;
+        width: 50%;
+        margin: 0 auto;
+        border: 2px solid blueviolet;
+    }
+</style>
+<body style="background: white" >
+<h2 style="text-align: center">Egg Catching Game</h2>
+<div style="text-align: center"><button onclick="resetGame()">Reset Game </button></div>
+<div class="container">
+    <canvas id="myCanvas" width="500" height="600" style="border: 1px solid black"></canvas>
+</div>
+
+
 <script>
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext('2d');
-    let myBasket = new Basket(225, 770, 50, 30, 'img/basket.png', 25);
-    let myEgg = new Egg(100, 100, 25, 25, 'img/egg.png');
+    let myBasket = new Basket(250, 570, 50, 30, 'img/basket.png', 25);
+    let myEgg = new Egg(0, -75, 25, 25, 'img/egg.png', 2.5);
+    let mySnake = new Snake(Math.random()*450, -50, 50, 50, 2.5, 'img/snake.png');
+    let mySnake2 = new Snake(Math.random()*450, -50, 50, 50, 2.5, 'img/snake.png');
+    let myLife = new Life(424,0,25,25,'img/heart.png');
+    let turn = 3;
     let score = 0;
     let background = new Image();
     let interval = -1;
-    background.src='https://i.pinimg.com/originals/91/cd/19/91cd19b23307cc92da34e8167b947fef.jpg'
+    background.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/NASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg/1200px-NASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg'
     myBasket.drawBasket(ctx);
     myEgg.drawEgg(ctx);
+    mySnake.drawSnake(ctx);
+    mySnake2.drawSnake(ctx);
+    myLife.drawLife(ctx);
 
-    function run(){
-        ctx.drawImage(background,0,0,500,800)
+    function run() {
+        ctx.drawImage(background, 0, 0, 500, 600)
     }
 
     function moveBasket(event) {
@@ -36,53 +74,161 @@
             }
 
             case 39: {
-                if (myBasket.x + myBasket.width > canvas.clientWidth-25) {
+                if (myBasket.x + myBasket.width > 475) {
                     return;
                 }
                 myBasket.moveRight();
                 break;
+            }
+            case 40:{
+                myBasket.downSpeed();
+                return;
+            }
+            case 38:{
+                myBasket.upSpeed();
+                return;
             }
         }
         updateCanvas();
     }
 
     function clearCanvas() {
-        ctx.clearRect(0, 0, 500, 800);
+        ctx.clearRect(0, 0, 500, 600);
     }
 
-    function checkcollision(){
-        if(myEgg.y+myEgg.height===canvas.height){
+
+    function checkcollision() {
+        if (myEgg.y > myBasket.y) {
+            turn--;
             return true;
+        }}
+        function checkcollision1(){
+            if (mySnake._y < myBasket._y + myBasket._height &&
+                mySnake._y + mySnake._height > myBasket._y &&
+                myBasket._x < mySnake._x + mySnake._width &&
+                myBasket._x + myBasket._width > mySnake._x) {
+                turn--;
+                return true;
+            }
         }
-    }
+        function checkcollision2(){
+            if (mySnake2._y < myBasket._y + myBasket._height &&
+                mySnake2._y + mySnake2._height > myBasket._y &&
+                myBasket._x < mySnake2._x + mySnake2._width &&
+                myBasket._x + myBasket._width > mySnake2._x) {
+                turn--;
+                return true;
+            }
+        }
+
+
+
     function moveEgg() {
-        if(myEgg.x>myBasket.x && myEgg.x<myBasket.width+myBasket.x&& myEgg.y>myBasket.y){
+        myEgg.moveDown();
+        updateCanvas();
+        if (myEgg._y < myBasket._y + myBasket._height &&
+            myEgg._y + myEgg._height > myBasket._y &&
+            myBasket._x < myEgg._x + myEgg._width &&
+            myBasket._x + myBasket._width > myEgg._x) {
+            myEgg._y = 0;
+            myEgg._x = Math.random() * 475;
             score++;
-            document.getElementById("scoreShow").innerHTML = "score: " + score;
         }
-            if (myEgg.y > canvas.clientHeight) {
-                myEgg.y = 0;
-                myEgg._x = Math.random() * 475;
-            }
-            myEgg.moveDown();
-            updateCanvas();
-            if (checkcollision()){
+        if (score >= 10) {
+            myEgg._speed = 5;
+            mySnake2.moveDown();
+        }
+        if (score === 20) {
+            myEgg._speed = 7.5;
+        }
+        if (checkcollision()) {
+            // alert("Mất 1 mạng");
+            myEgg._y = -50;
+            myEgg._x = Math.random() * 450;
+        }if(turn===0){
+                alert("GameOver!!")
+                updateCanvas();
                 cancelAnimationFrame(interval);
-            } else{
-                interval = requestAnimationFrame(moveEgg);
             }
+
+            if(localStorage.getItem('highScore')<this.score){
+                localStorage.setItem('highScore',this.score);
+                let name = prompt('Nhập tên');
+                localStorage.setItem('name',name);
+            }
+         else {
+            interval = requestAnimationFrame(moveEgg);
+        }
     }
+
+    function moveSnake() {
+        mySnake.moveDown();
+        updateCanvas();
+        if (mySnake._y > canvas.clientHeight) {
+            mySnake._y = -50;
+            mySnake._x = Math.random() * 475;
+        }
+        if (mySnake2._y > canvas.clientHeight) {
+            mySnake2._y = -50;
+            mySnake2._x = Math.random() * 475;
+        }
+        if (checkcollision1()) {
+            // alert("Mất 1 mạng")
+            mySnake._y=-50;
+            mySnake._x=Math.random()*450;
+            myEgg._y=-50;
+            myEgg._x=Math.random()*450;
+        }
+        if (checkcollision2()) {
+            // alert("Mất 1 mạng")
+            mySnake2._y=-50;
+            mySnake2._x=Math.random()*450;
+            myEgg._y=-50;
+            myEgg._x=Math.random()*450;
+        }
+        if(turn===0){
+            alert("GameOver!!");
+            updateCanvas();
+            cancelAnimationFrame(interval);
+        }
+        else {
+            interval = requestAnimationFrame(moveSnake);
+        }
+    }
+
+    function moveLife(){
+        updateCanvas();
+    }
+
+    function scores() {
+        ctx.fillStyle = "red";
+        ctx.font = "bold 20px Arial";
+        ctx.fillText("Score:" + score, 10, 20);
+    }
+    function turnPlay(){
+        ctx.fillStyle = "red";
+        ctx.font = "bold 20px Arial";
+        ctx.fillText("X" + turn, 450, 20);
+    }
+
     function updateCanvas() {
         clearCanvas();
         run();
+        scores();
+        turnPlay();
         myEgg.drawEgg(ctx);
         myBasket.drawBasket(ctx);
+        mySnake.drawSnake(ctx);
+        mySnake2.drawSnake(ctx);
+        myLife.drawLife(ctx);
     }
-    setInterval(moveEgg, 1000);
+    function resetGame(){
+        location.reload();
+    }
+    moveLife();
+    moveEgg();
+    moveSnake();
     document.addEventListener('keydown', moveBasket);
-    // moveEgg();
-
-
 </script>
 </body>
 </html>

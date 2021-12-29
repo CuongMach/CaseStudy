@@ -1,18 +1,16 @@
-class Basket {
+class Life{
     _x;
     _y;
     _width;
     _height;
     _src;
-    _speed;
 
-    constructor(x, y, width, height, src, speed) {
+    constructor(x, y, width, height, src) {
         this._x = x;
         this._y = y;
         this._width = width;
         this._height = height;
         this._src = src;
-        this._speed = speed;
     }
 
     get x() {
@@ -54,32 +52,9 @@ class Basket {
     set src(value) {
         this._src = value;
     }
-
-    get speed() {
-        return this._speed;
-    }
-
-    set speed(value) {
-        this._speed = value;
-    }
-
-    moveLeft() {
-        this._x = this._x - this._speed;
-    }
-
-    moveRight() {
-        this._x = this._x + this._speed;
-    }
-
-    upSpeed(){
-        this._speed *= 1.5;
-    }
-    downSpeed(){
-        this._speed /=1.5;
-    }
-    drawBasket(ctx) {
-        let imageBasket = new Image();
-        imageBasket.src = this._src;
-        ctx.drawImage(imageBasket, this._x, this._y, this._width, this._height);
+    drawLife(ctx) {
+        let imageLife = new Image();
+        imageLife.src = this._src;
+        ctx.drawImage(imageLife, this._x, this._y, this._width, this._height)
     }
 }
