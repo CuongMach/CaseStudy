@@ -55,6 +55,7 @@
     let background = new Image();
     let interval = -1;
     let imgGameOver = new Image();
+    let isGameOver = false;
     background.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/NASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg/1200px-NASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg'
     imgGameOver.src = 'img/gameover.png'
     myBasket.drawBasket(ctx);
@@ -69,9 +70,11 @@
 
     function gameOver() {
         ctx.drawImage(imgGameOver, 100, 150, 300, 300)
+        isGameOver = true;
     }
 
-        function moveBasket(event) {
+    function moveBasket(event) {
+        if (!isGameOver) {
             switch (event.keyCode) {
                 case 37: {
                     if (myBasket.x < 25) {
@@ -98,9 +101,8 @@
                 }
             }
             updateCanvas();
-
-
         }
+    }
 
 
     function clearCanvas() {
@@ -135,81 +137,78 @@
         }
     }
 
-        function moveEgg() {
-            myEgg.moveDown();
-            updateCanvas();
-            if (myEgg._y < myBasket._y + myBasket._height &&
-                myEgg._y + myEgg._height > myBasket._y &&
-                myBasket._x < myEgg._x + myEgg._width &&
-                myBasket._x + myBasket._width > myEgg._x) {
-                myEgg._y = 0;
-                myEgg._x = Math.random() * 475;
-                score++;
-            }
-            if (score >= 10) {
-                myEgg._speed = 5;
-                mySnake2.moveDown();
-            }
-            if (score === 20) {
-                myEgg._speed = 7.5;
-            }
-            if (checkcollision()) {
-                // alert("Mất 1 mạng");
-                myEgg._y = -50;
-                myEgg._x = Math.random() * 450;
-            }
-            if (turn === 0) {
-                // alert("GameOver!!")
-                gameOver();
-
-                // updateCanvas();
-                // cancelAnimationFrame(interval);
-            } else {
-                interval = requestAnimationFrame(moveEgg);
-            }
+    function moveEgg() {
+        myEgg.moveDown();
+        updateCanvas();
+        if (myEgg._y < myBasket._y + myBasket._height &&
+            myEgg._y + myEgg._height > myBasket._y &&
+            myBasket._x < myEgg._x + myEgg._width &&
+            myBasket._x + myBasket._width > myEgg._x) {
+            myEgg._y = 0;
+            myEgg._x = Math.random() * 475;
+            score++;
         }
-
-
-
-        function moveSnake() {
-            mySnake.moveDown();
-            updateCanvas();
-            if (mySnake._y > canvas.clientHeight) {
-                mySnake._y = -50;
-                mySnake._x = Math.random() * 475;
-            }
-            if (mySnake2._y > canvas.clientHeight) {
-                mySnake2._y = -50;
-                mySnake2._x = Math.random() * 475;
-            }
-            if (checkcollision1()) {
-                // alert("Mất 1 mạng")
-                mySnake._y = -50;
-                mySnake._x = Math.random() * 450;
-                myEgg._y = -50;
-                myEgg._x = Math.random() * 450;
-            }
-            if (checkcollision2()) {
-                // alert("Mất 1 mạng")
-                mySnake2._y = -50;
-                mySnake2._x = Math.random() * 450;
-                myEgg._y = -50;
-                myEgg._x = Math.random() * 450;
-            }
-            if (turn === 0) {
-                gameOver();
-
-
-                // alert("GameOver!!");
-                // updateCanvas();
-                // cancelAnimationFrame(interval);
-
-            }
-            else {
-                interval = requestAnimationFrame(moveSnake);
-            }
+        if (score >= 10) {
+            myEgg._speed = 5;
+            mySnake2.moveDown();
         }
+        if (score === 20) {
+            myEgg._speed = 7.5;
+        }
+        if (checkcollision()) {
+            // alert("Mất 1 mạng");
+            myEgg._y = -50;
+            myEgg._x = Math.random() * 450;
+        }
+        if (turn === 0) {
+            // alert("GameOver!!")
+            gameOver();
 
+            // updateCanvas();
+            // cancelAnimationFrame(interval);
+        } else {
+            interval = requestAnimationFrame(moveEgg);
+        }
+    }
+
+
+    function moveSnake() {
+        mySnake.moveDown();
+        updateCanvas();
+        if (mySnake._y > canvas.clientHeight) {
+            mySnake._y = -50;
+            mySnake._x = Math.random() * 475;
+        }
+        if (mySnake2._y > canvas.clientHeight) {
+            mySnake2._y = -50;
+            mySnake2._x = Math.random() * 475;
+        }
+        if (checkcollision1()) {
+            // alert("Mất 1 mạng")
+            mySnake._y = -50;
+            mySnake._x = Math.random() * 450;
+            myEgg._y = -50;
+            myEgg._x = Math.random() * 450;
+        }
+        if (checkcollision2()) {
+            // alert("Mất 1 mạng")
+            mySnake2._y = -50;
+            mySnake2._x = Math.random() * 450;
+            myEgg._y = -50;
+            myEgg._x = Math.random() * 450;
+        }
+        if (turn === 0) {
+            gameOver();
+
+
+            // alert("GameOver!!");
+            // updateCanvas();
+            // cancelAnimationFrame(interval);
+
+        } else {
+            interval = requestAnimationFrame(moveSnake);
+        }
+    }
 
 
     function moveLife() {
