@@ -36,11 +36,11 @@
 <h2 style="text-align: center">Egg Catching Game</h2>
 <div style="text-align: center">
     <button onclick="resetGame()">Reset Game</button>
+    <button onclick="clearHighScore()">Clear Hight Score</button>
 </div>
 <div class="container">
     <canvas id="myCanvas" width="500" height="600" style="border: 1px solid black"></canvas>
 </div>
-
 
 <script>
     let canvas = document.getElementById("myCanvas");
@@ -73,6 +73,12 @@
         isGameOver = true;
     }
 
+    function clearHighScore(){
+        window.localStorage.clear();
+        location.reload();
+        localStorage.setItem('highScore' , 0);
+        localStorage.setItem('name','Player')
+    }
     function moveBasket(event) {
         if (!isGameOver) {
             switch (event.keyCode) {
@@ -163,6 +169,11 @@
         if (turn === 0) {
             // alert("GameOver!!")
             gameOver();
+            if(localStorage.getItem('highScore')< score){
+                localStorage.setItem('highScore', score);
+                let name = prompt("Bạn đã đạt điểm cao nhất, mời nhập tên");
+                localStorage.setItem('name',name)
+            }
 
             // updateCanvas();
             // cancelAnimationFrame(interval);
@@ -199,8 +210,11 @@
         }
         if (turn === 0) {
             gameOver();
-
-
+            if(localStorage.getItem('highScore')< score){
+                localStorage.setItem('highScore', score);
+                let name = prompt("Bạn đã đạt điểm cao nhất, mời nhập tên");
+                localStorage.setItem('name',name)
+            }
             // alert("GameOver!!");
             // updateCanvas();
             // cancelAnimationFrame(interval);
@@ -232,6 +246,7 @@
         run();
         scores();
         turnPlay();
+        highscore();
         myEgg.drawEgg(ctx);
         myBasket.drawBasket(ctx);
         mySnake.drawSnake(ctx);
@@ -241,6 +256,10 @@
 
     function resetGame() {
         location.reload();
+    }
+
+    function highscore(){
+        ctx.fillText("Record : " + localStorage.getItem('highScore') + " by " + localStorage.getItem('name'),10,40)
     }
 
     moveLife();
